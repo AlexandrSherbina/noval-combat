@@ -1,5 +1,7 @@
+//
+
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import styles from "./FiledGame.module.scss";
 
 interface CustomStyle extends React.CSSProperties {
@@ -7,92 +9,91 @@ interface CustomStyle extends React.CSSProperties {
   "--count-rows"?: number;
 }
 
-function rangeFn(from: number = 1, to: number = 1) {
-  const resultArr: number[] = [];
-  for (let i = from; i <= to; i++) {
-    resultArr.push(i);
-  }
-  return resultArr;
+interface FiledGameProps {
+  colsCount?: number;
+  rowsCount?: number;
 }
-const singleCharArrGen = (char: string | number, amount: number) =>
-  Array.from(char.toString().repeat(amount).split(""));
 
-export default function FiledGame({ colsCount = 10, rowsCount = 10 }) {
-  const START_CODE_CHAR = 97;
-  const END_CODE_CHAR = START_CODE_CHAR + (colsCount - 1);
+function rangeFn(from: number, to: number): number[] {
+  return Array.from({ length: to - from + 1 }, (_, i) => from + i);
+}
+
+function singleCharArrGen(char: string | number, amount: number): string[] {
+  return Array.from({ length: amount }, () => char.toString());
+}
+
+const FiledGame: React.FC<FiledGameProps> = ({
+  colsCount = 10,
+  rowsCount = 10,
+}) => {
   const sizeField = colsCount * rowsCount;
-  const rangeCodeForLetters = rangeFn(START_CODE_CHAR, END_CODE_CHAR);
-  const rangeAxisX = String.fromCodePoint(...rangeCodeForLetters).split("");
-  const rangeAxisY = rangeFn(1, rowsCount);
-  const [fieldGame, setFieldGame] = useState<string[]>(
-    singleCharArrGen(0, sizeField)
-  );
-  const [scaleX, setScaleX] = useState<string[]>(rangeAxisX);
-  const [scaleY, setScaleY] = useState<number[]>(rangeAxisY);
-  useEffect(() => {
-    setScaleX(rangeAxisX);
+  const START_CODE_CHAR = 97; // ASCII code for 'a'
+
+  // Генерация шкал X и Y, мемоизация для производительности
+  const rangeAxisX = useMemo(() => {
+    const END_CODE_CHAR = START_CODE_CHAR + colsCount - 1;
+    return String.fromCodePoint(
+      ...rangeFn(START_CODE_CHAR, END_CODE_CHAR)
+    ).split("");
   }, [colsCount]);
-  useEffect(() => {
-    setScaleY(rangeAxisY);
-  }, [rowsCount]);
-  useEffect(() => {
-    setFieldGame(singleCharArrGen(0, sizeField));
-  }, [sizeField]);
+
+  const rangeAxisY = useMemo(() => rangeFn(1, rowsCount), [rowsCount]);
+  const fieldGame = useMemo(() => singleCharArrGen(0, sizeField), [sizeField]);
 
   return (
-    <>
+    <div
+      style={
+        {
+          "--count-cols": colsCount,
+          "--count-rows": rowsCount,
+        } as CustomStyle
+      }
+      className={`grid ${styles["wrap-field-player"]}`}
+    >
+      {/* Шкала X */}
       <div
-        style={
-          {
-            "--count-cols": colsCount,
-            "--count-rows": rowsCount,
-          } as CustomStyle
-        }
-        className={`grid ${styles["wrap-field-player"]}`}
+        className={`grid ${styles["grid-dynamic-cols"]} ${styles["scale-x"]}`}
       >
-        <div
-          className={`grid 
-          ${styles["grid-dynamic-cols"]}             
-           ${styles["scale-x"]}`}
-        >
-          {scaleX.map((letter) => (
-            <div
-              className="flex items-center justify-center  w-8 h-8"
-              key={letter}
-            >
-              {letter}
-            </div>
-          ))}
-        </div>
-        <div
-          className={`container-sm grid  ${styles["grid-dynamic-cols"]}  ${styles["grid-dynamic-rows"]} border border-indigo-600 ${styles["field-player"]}`}
-        >
-          {fieldGame.map((cell, i) => {
-            return (
-              <div
-                className="flex items-center justify-center w-8 h-8 border border-indigo-600 hover:bg-cyan-50 cursor-pointer"
-                key={i + "key"}
-              >
-                {""}
-              </div>
-            );
-          })}
-        </div>
-        <div
-          className={`grid ${styles["grid-dynamic-rows"]} ${styles["scale-y"]}`}
-        >
-          {scaleY.map((number) => {
-            return (
-              <div
-                className="flex items-center justify-center  w-8 h-8"
-                key={number}
-              >
-                {number}
-              </div>
-            );
-          })}
-        </div>
+        {rangeAxisX.map((letter) => (
+          <div
+            className="flex items-center justify-center w-8 h-8"
+            key={letter}
+          >
+            {letter}
+          </div>
+        ))}
       </div>
-    </>
+
+      {/* Игровое поле */}
+      <div
+        className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
+                    border border-indigo-600 ${styles["field-player"]}`}
+      >
+        {fieldGame.map((_, i) => (
+          <div
+            className="flex items-center justify-center w-8 h-8 border border-indigo-600 hover:bg-cyan-50 cursor-pointer"
+            key={i}
+          >
+            {""}
+          </div>
+        ))}
+      </div>
+
+      {/* Шкала Y */}
+      <div
+        className={`grid ${styles["grid-dynamic-rows"]} ${styles["scale-y"]}`}
+      >
+        {rangeAxisY.map((number) => (
+          <div
+            className="flex items-center justify-center w-8 h-8"
+            key={number}
+          >
+            {number}
+          </div>
+        ))}
+      </div>
+    </div>
   );
-}
+};
+
+export default FiledGame;

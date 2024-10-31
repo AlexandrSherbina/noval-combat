@@ -27,7 +27,7 @@ export default function NavalCombat() {
           <GameSettings onApply={handleApplySettings} />
         </div>
         <h2> Game Board</h2>
-        <div className="flex flex-row gap-2 game-board">
+        <div className="flex flex-wrap gap-2 game-board">
           <div className="border-2 p-2 game-board-player">
             <h3>Player 1</h3>
             <FiledGame rowsCount={rows} colsCount={columns}></FiledGame>

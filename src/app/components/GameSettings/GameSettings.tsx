@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 interface GameSettingsProps {
   onApply: (size: { columns: number; rows: number }) => void; // Пропс onApply
 }
@@ -17,7 +18,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({ onApply }) => {
       </h2>
 
       <div className="flex flex-row gap-3">
-        <div className="flex flex-col space-y-2 ">
+        <div className="flex flex-col space-y-2 w-16">
           <label className="text-sm font-medium text-gray-700">Columns:</label>
           <input
             type="number"
@@ -30,7 +31,7 @@ const GameSettings: React.FC<GameSettingsProps> = ({ onApply }) => {
           />
         </div>
 
-        <div className="flex flex-col space-y-2 ">
+        <div className="flex flex-col space-y-2 w-16">
           <label className="text-sm font-medium text-gray-700">Rows:</label>
           <input
             type="number"
