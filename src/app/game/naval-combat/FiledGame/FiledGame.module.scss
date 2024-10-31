@@ -1,0 +1,25 @@
+.wrap-field-player {
+    grid-template-areas: 
+    ". scaleX"
+    "scaleY field"
+    ;
+    grid-template-rows: 32px 1fr;
+    grid-template-columns: 32px 1fr;   
+    .field-player {
+        grid-area: field;
+    }
+    
+    .scale-x {
+        grid-area: scaleX;
+    }
+    .scale-y {
+        grid-area: scaleY;
+    }
+
+}
+.grid-dynamic-cols {
+    grid-template-columns: repeat(var(--count-cols), minmax(0, 1fr));
+}
+.grid-dynamic-rows {   
+    grid-template-rows: repeat(var(--count-rows), minmax(0, 1fr));
+}
