@@ -1,8 +1,7 @@
-//
-
 "use client";
 import React, { useMemo } from "react";
 import styles from "./FiledGame.module.scss";
+import { filedGameService } from "../services/field-game.service";
 
 interface CustomStyle extends React.CSSProperties {
   "--count-cols"?: number;
@@ -12,14 +11,6 @@ interface CustomStyle extends React.CSSProperties {
 interface FiledGameProps {
   colsCount?: number;
   rowsCount?: number;
-}
-
-function rangeFn(from: number, to: number): number[] {
-  return Array.from({ length: to - from + 1 }, (_, i) => from + i);
-}
-
-function singleCharArrGen(char: string | number, amount: number): string[] {
-  return Array.from({ length: amount }, () => char.toString());
 }
 
 const FiledGame: React.FC<FiledGameProps> = ({
@@ -33,66 +24,79 @@ const FiledGame: React.FC<FiledGameProps> = ({
   const rangeAxisX = useMemo(() => {
     const END_CODE_CHAR = START_CODE_CHAR + colsCount - 1;
     return String.fromCodePoint(
-      ...rangeFn(START_CODE_CHAR, END_CODE_CHAR)
+      ...filedGameService.rangeFn(START_CODE_CHAR, END_CODE_CHAR)
     ).split("");
   }, [colsCount]);
 
-  const rangeAxisY = useMemo(() => rangeFn(1, rowsCount), [rowsCount]);
-  const fieldGame = useMemo(() => singleCharArrGen(0, sizeField), [sizeField]);
+  const rangeAxisY = useMemo(
+    () => filedGameService.rangeFn(1, rowsCount),
+    [rowsCount]
+  );
+  const fieldGame = useMemo(
+    () => filedGameService.singleCharArrGen(0, sizeField),
+    [sizeField]
+  );
 
+  const battleFiledMatrix = useMemo(
+    () => filedGameService.createBattlefieldMatrix(colsCount, rowsCount),
+    [colsCount, rowsCount]
+  );
+  console.log("matrix: ", battleFiledMatrix);
   return (
-    <div
-      style={
-        {
-          "--count-cols": colsCount,
-          "--count-rows": rowsCount,
-        } as CustomStyle
-      }
-      className={`grid ${styles["wrap-field-player"]}`}
-    >
-      {/* Шкала X */}
+    <>
       <div
-        className={`grid ${styles["grid-dynamic-cols"]} ${styles["scale-x"]}`}
+        style={
+          {
+            "--count-cols": colsCount,
+            "--count-rows": rowsCount,
+          } as CustomStyle
+        }
+        className={`grid ${styles["wrap-field-player"]}`}
       >
-        {rangeAxisX.map((letter) => (
-          <div
-            className="flex items-center justify-center w-8 h-8"
-            key={letter}
-          >
-            {letter}
-          </div>
-        ))}
-      </div>
+        {/* Шкала X */}
+        <div
+          className={`grid ${styles["grid-dynamic-cols"]} ${styles["scale-x"]}`}
+        >
+          {rangeAxisX.map((letter) => (
+            <div
+              className="flex items-center justify-center w-8 h-8"
+              key={letter}
+            >
+              {letter}
+            </div>
+          ))}
+        </div>
 
-      {/* Игровое поле */}
-      <div
-        className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
+        {/* Игровое поле */}
+        <div
+          className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
                     border border-indigo-600 ${styles["field-player"]}`}
-      >
-        {fieldGame.map((_, i) => (
-          <div
-            className="flex items-center justify-center w-8 h-8 border border-indigo-600 hover:bg-cyan-50 cursor-pointer"
-            key={i}
-          >
-            {""}
-          </div>
-        ))}
-      </div>
+        >
+          {fieldGame.map((_, i) => (
+            <div
+              className="flex items-center justify-center w-8 h-8 border border-indigo-600 hover:bg-cyan-50 cursor-pointer"
+              key={i}
+            >
+              {""}
+            </div>
+          ))}
+        </div>
 
-      {/* Шкала Y */}
-      <div
-        className={`grid ${styles["grid-dynamic-rows"]} ${styles["scale-y"]}`}
-      >
-        {rangeAxisY.map((number) => (
-          <div
-            className="flex items-center justify-center w-8 h-8"
-            key={number}
-          >
-            {number}
-          </div>
-        ))}
+        {/* Шкала Y */}
+        <div
+          className={`grid ${styles["grid-dynamic-rows"]} ${styles["scale-y"]}`}
+        >
+          {rangeAxisY.map((number) => (
+            <div
+              className="flex items-center justify-center w-8 h-8"
+              key={number}
+            >
+              {number}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
