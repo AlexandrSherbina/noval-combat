@@ -13,10 +13,6 @@ const GameSettings: React.FC<GameSettingsProps> = ({ onApply }) => {
 
   return (
     <div className="flex flex-col items-start space-y-4 p-4 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="text-lg font-semibold text-gray-800">
-        Game field settings
-      </h2>
-
       <div className="flex flex-row gap-3">
         <div className="flex flex-col space-y-2 w-16">
           <label className="text-sm font-medium text-gray-700">Columns:</label>

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import FiledGame from "./FiledGame/FiledGame";
 import GameSettings from "@/app/components/GameSettings/GameSettings";
+import Accordion from "@/app/components/GameSettings/Accordion/Accordion";
 
 export default function NavalCombat() {
   const [columns, setColumns] = useState(10);
@@ -13,8 +14,6 @@ export default function NavalCombat() {
     columns: number;
     rows: number;
   }) => {
-    // Логика для создания нового поля
-    console.log("Новый размер поля:", { columns, rows });
     setColumns(columns);
     setRows(rows);
   };
@@ -24,7 +23,9 @@ export default function NavalCombat() {
       <div className="flex flex-col gap-3 border-4 p-4 game-container">
         <h2>Panel Game</h2>
         <div className="border-2 p-2 panel-game">
-          <GameSettings onApply={handleApplySettings} />
+          <Accordion title="Game field settings">
+            <GameSettings onApply={handleApplySettings} />
+          </Accordion>
         </div>
         <h2> Game Board</h2>
         <div className="flex flex-wrap gap-2 game-board">
