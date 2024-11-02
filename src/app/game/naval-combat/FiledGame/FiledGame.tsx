@@ -17,31 +17,25 @@ const FiledGame: React.FC<FiledGameProps> = ({
   colsCount = 10,
   rowsCount = 10,
 }) => {
-  const sizeField = colsCount * rowsCount;
   const START_CODE_CHAR = 97; // ASCII code for 'a'
 
   // Генерация шкал X и Y, мемоизация для производительности
   const rangeAxisX = useMemo(() => {
-    const END_CODE_CHAR = START_CODE_CHAR + colsCount - 1;
-    return String.fromCodePoint(
-      ...filedGameService.rangeFn(START_CODE_CHAR, END_CODE_CHAR)
-    ).split("");
+    const END_CODE_CHAR = colsCount;
+    return filedGameService.rangeChars(START_CODE_CHAR, END_CODE_CHAR);
   }, [colsCount]);
 
   const rangeAxisY = useMemo(
     () => filedGameService.rangeFn(1, rowsCount),
     [rowsCount]
   );
-  const fieldGame = useMemo(
-    () => filedGameService.singleCharArrGen(0, sizeField),
-    [sizeField]
-  );
 
   const battleFiledMatrix = useMemo(
     () => filedGameService.createBattlefieldMatrix(colsCount, rowsCount),
     [colsCount, rowsCount]
   );
-  console.log("matrix: ", battleFiledMatrix);
+
+  console.log("battleFiledMatrix: ", battleFiledMatrix);
   return (
     <>
       <div
@@ -68,7 +62,7 @@ const FiledGame: React.FC<FiledGameProps> = ({
         </div>
 
         {/* Игровое поле */}
-        <div
+        {/* <div
           className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
                     border border-indigo-600 ${styles["field-player"]}`}
         >
@@ -80,6 +74,25 @@ const FiledGame: React.FC<FiledGameProps> = ({
               {""}
             </div>
           ))}
+        </div> */}
+        {/* Refactor battle filed*/}
+        <div
+          className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
+        border border-indigo-600 ${styles["field-player"]}`}
+        >
+          {battleFiledMatrix.map((row, i) => {
+            return row.map((col, j) => {
+              return (
+                <div
+                  id={`cell-${i}-${j}`}
+                  className="text-xs  flex items-center justify-center w-8 h-8 border border-indigo-600 hover:bg-cyan-50 cursor-pointer"
+                  key={j}
+                >
+                  {`(${i},${col})`}
+                </div>
+              );
+            });
+          })}
         </div>
 
         {/* Шкала Y */}

@@ -7,12 +7,15 @@ class FieldGameService {
     return Array.from({ length: amount }, () => char.toString());
   }
 
+  rangeChars(start_code_char: number = 97, countChars: number = 10) {
+    const end_code_char = start_code_char + countChars - 1;
+    return String.fromCodePoint(
+      ...filedGameService.rangeFn(start_code_char, end_code_char)
+    ).split("");
+  }
   createBattlefieldMatrix(cols: number = 10, rows: number = 10, start_code_char: number = 97): string[][] {
-    const matrix: string[][] = Array.from({ length: rows }, () =>
-      String.fromCodePoint(
-        ...filedGameService.rangeFn(start_code_char, start_code_char + cols - 1)
-      ).split("")
-    );
+    const arrChars = this.rangeChars(start_code_char, cols);
+    const matrix: string[][] = Array.from({ length: rows }, () => arrChars);
     return matrix;
   }
 }
