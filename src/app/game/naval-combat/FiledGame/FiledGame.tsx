@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import styles from "./FiledGame.module.scss";
 import { filedGameService } from "../services/field-game.service";
 
@@ -30,12 +30,15 @@ const FiledGame: React.FC<FiledGameProps> = ({
     [rowsCount]
   );
 
-  const battleFiledMatrix = useMemo(
-    () => filedGameService.createBattlefieldMatrix(colsCount, rowsCount),
-    [colsCount, rowsCount]
-  );
+  const battleFiledMatrix = useMemo(() => {
+    const columns = filedGameService.singleCharacterArray(0, colsCount);
+    return filedGameService.createBattlefieldMatrix(rowsCount, columns);
+  }, [rowsCount, colsCount]);
 
-  console.log("battleFiledMatrix: ", battleFiledMatrix);
+  useEffect(() => {
+    console.log("battleFiledMatrix", battleFiledMatrix);
+  }, [battleFiledMatrix]);
+
   return (
     <>
       <div
@@ -62,33 +65,20 @@ const FiledGame: React.FC<FiledGameProps> = ({
         </div>
 
         {/* Игровое поле */}
-        {/* <div
-          className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
-                    border border-indigo-600 ${styles["field-player"]}`}
-        >
-          {fieldGame.map((_, i) => (
-            <div
-              className="flex items-center justify-center w-8 h-8 border border-indigo-600 hover:bg-cyan-50 cursor-pointer"
-              key={i}
-            >
-              {""}
-            </div>
-          ))}
-        </div> */}
-        {/* Refactor battle filed*/}
         <div
           className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
         border border-indigo-600 ${styles["field-player"]}`}
         >
-          {battleFiledMatrix.map((row, i) => {
-            return row.map((col, j) => {
+          {battleFiledMatrix.map((_row, i) => {
+            return _row.map((_col, j) => {
+              const coord = rangeAxisX[j] + i;
               return (
                 <div
-                  id={`cell-${i}-${j}`}
+                  id={`cell-${coord}`}
                   className="text-xs  flex items-center justify-center w-8 h-8 border border-indigo-600 hover:bg-cyan-50 cursor-pointer"
                   key={j}
                 >
-                  {`(${i},${col})`}
+                  {`(${coord})`}
                 </div>
               );
             });
