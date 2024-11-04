@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import styles from "./FiledGame.module.scss";
 import { filedGameService } from "../services/field-game.service";
 
@@ -19,6 +19,20 @@ const FiledGame: React.FC<FiledGameProps> = ({
 }) => {
   const START_CODE_CHAR = 97; // ASCII code for 'a'
 
+  const handleClickCell = (
+    event: React.MouseEvent<HTMLDivElement>,
+    row: number,
+    col: number
+  ) => {
+    const valueCell = 4;
+    const target = event.currentTarget;
+    const id = target.id.split("-")[1];
+    console.log("id", id);
+    target.classList.toggle("bg-sky-600");
+    target.textContent = valueCell.toString();
+    filedGameService.updateBattleField([[row, col]], valueCell);
+    filedGameService.loggerBattleField("after");
+  };
   // Генерация шкал X и Y, мемоизация для производительности
   const rangeAxisX = useMemo(() => {
     const END_CODE_CHAR = colsCount;
@@ -32,12 +46,9 @@ const FiledGame: React.FC<FiledGameProps> = ({
 
   const battleFiledMatrix = useMemo(() => {
     const columns = filedGameService.singleCharacterArray(0, colsCount);
-    return filedGameService.createBattlefieldMatrix(rowsCount, columns);
+    filedGameService.createBattlefieldMatrix(rowsCount, columns);
+    return filedGameService.getBattleField();
   }, [rowsCount, colsCount]);
-
-  useEffect(() => {
-    console.log("battleFiledMatrix", battleFiledMatrix);
-  }, [battleFiledMatrix]);
 
   return (
     <>
@@ -69,6 +80,7 @@ const FiledGame: React.FC<FiledGameProps> = ({
           className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
         border border-indigo-600 ${styles["field-player"]}`}
         >
+          {/* {battleFiledMatrix.map((_row, i) => { */}
           {battleFiledMatrix.map((_row, i) => {
             return _row.map((_col, j) => {
               const coord = rangeAxisX[j] + i;
@@ -77,8 +89,11 @@ const FiledGame: React.FC<FiledGameProps> = ({
                   id={`cell-${coord}`}
                   className="text-xs  flex items-center justify-center w-8 h-8 border border-indigo-600 hover:bg-cyan-50 cursor-pointer"
                   key={j}
+                  onClick={(e) => handleClickCell(e, i, j)}
                 >
-                  {`(${coord})`}
+                  {/* (${coord}) = */}
+                  {`
+                   ${_col}`}
                 </div>
               );
             });

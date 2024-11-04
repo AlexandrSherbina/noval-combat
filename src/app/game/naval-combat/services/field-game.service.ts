@@ -1,4 +1,8 @@
 class FieldGameService {
+  curBattleField: string[][] | number[][];
+  constructor() {
+    this.curBattleField = [[]];
+  }
   rangeFn(from: number, to: number): number[] {
     return Array.from({ length: to - from + 1 }, (_, i) => from + i);
   }
@@ -14,8 +18,23 @@ class FieldGameService {
     ).split("");
   }
   createBattlefieldMatrix(rows: number = 10, arrChars: string[] = []): string[][] {
-    const matrix: string[][] = Array.from({ length: rows }, () => arrChars);
+    const matrix: string[][] = Array.from({ length: rows }, () => [...arrChars]);
+    this.curBattleField = matrix;
     return matrix;
+  }
+  getBattleField() {
+    return this.curBattleField;
+  }
+
+  loggerBattleField(descry: string = '') {
+    return console.log(`Matrix ${descry}: `, this.getBattleField())
+  }
+
+  updateBattleField(coords: number[][], valueCell: number | string) {
+    coords.forEach((coord) => {
+      const [row, col] = coord;
+      this.curBattleField[row][col] = valueCell;
+    })
   }
 }
 

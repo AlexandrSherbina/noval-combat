@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import FiledGame from "./FiledGame/FiledGame";
 import GameSettings from "@/app/components/GameSettings/GameSettings";
-import Accordion from "@/app/components/GameSettings/Accordion/Accordion";
+import Accordion from "@/app/components/Accordion/Accordion";
+import ShipList from "@/app/components/ShipList/ShipList";
 
 export default function NavalCombat() {
   const [columns, setColumns] = useState(10);
@@ -25,6 +26,9 @@ export default function NavalCombat() {
         <div className="border-2 p-2 panel-game">
           <Accordion title="Game field settings">
             <GameSettings onApply={handleApplySettings} />
+          </Accordion>
+          <Accordion title="Action game">
+            <ShipList />
           </Accordion>
         </div>
         <h2> Game Board</h2>
