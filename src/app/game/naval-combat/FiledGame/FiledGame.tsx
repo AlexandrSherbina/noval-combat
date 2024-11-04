@@ -2,6 +2,9 @@
 import React, { useMemo } from "react";
 import styles from "./FiledGame.module.scss";
 import { filedGameService } from "../services/field-game.service";
+import { shipService } from "../services/ship.service";
+import { shipDecks } from "./../services/ship.service";
+import { ships } from "@/app/game/naval-combat/services/ship.service";
 
 interface CustomStyle extends React.CSSProperties {
   "--count-cols"?: number;
@@ -32,6 +35,9 @@ const FiledGame: React.FC<FiledGameProps> = ({
     target.textContent = valueCell.toString();
     filedGameService.updateBattleField([[row, col]], valueCell);
     filedGameService.loggerBattleField("after");
+
+    shipService.updateMaxCount(shipDecks.DOUBLE);
+    shipService.loggedShips();
   };
   // Генерация шкал X и Y, мемоизация для производительности
   const rangeAxisX = useMemo(() => {
@@ -45,6 +51,7 @@ const FiledGame: React.FC<FiledGameProps> = ({
   );
 
   const battleFiledMatrix = useMemo(() => {
+    shipService.setShips(ships);
     const columns = filedGameService.singleCharacterArray(0, colsCount);
     filedGameService.createBattlefieldMatrix(rowsCount, columns);
     return filedGameService.getBattleField();
@@ -80,7 +87,6 @@ const FiledGame: React.FC<FiledGameProps> = ({
           className={`container-sm grid ${styles["grid-dynamic-cols"]} ${styles["grid-dynamic-rows"]} 
         border border-indigo-600 ${styles["field-player"]}`}
         >
-          {/* {battleFiledMatrix.map((_row, i) => { */}
           {battleFiledMatrix.map((_row, i) => {
             return _row.map((_col, j) => {
               const coord = rangeAxisX[j] + i;
@@ -91,7 +97,6 @@ const FiledGame: React.FC<FiledGameProps> = ({
                   key={j}
                   onClick={(e) => handleClickCell(e, i, j)}
                 >
-                  {/* (${coord}) = */}
                   {`
                    ${_col}`}
                 </div>
